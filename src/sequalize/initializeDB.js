@@ -1,9 +1,12 @@
+import { runSeeds } from "../init/index.js";
 import { sequalize } from "./sequalize.js";
 
 export const initializeDB = async () => {
   try {
     await sequalize.authenticate();
     await sequalize.sync({ force: false });
+
+    await runSeeds()
 
     console.log("success");
   } catch (e) {
