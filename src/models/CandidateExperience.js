@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequalize } from "../sequalize/sequalize.js";
+import { sequalize } from "../config/sequalize.js";
 
 export const CandidateExperience = sequalize.define(
   "CandidateExperience",
@@ -37,11 +37,6 @@ export const CandidateExperience = sequalize.define(
     date_end: {
       type: DataTypes.DATE,
       allowNull: true,
-    },
-
-    active: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
     },
   },
   {

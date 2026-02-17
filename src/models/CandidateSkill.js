@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequalize } from "../sequalize/sequalize.js";
+import { sequalize } from "../config/sequalize.js";
 
 export const CandidateSkill = sequalize.define(
   "CandidateSkill",

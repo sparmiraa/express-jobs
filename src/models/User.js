@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequalize } from "../sequalize/sequalize.js";
+import { sequalize } from "../config/sequalize.js";
 
 export const User = sequalize.define(
   "User",
@@ -18,7 +18,6 @@ export const User = sequalize.define(
 
     phone_number: {
       type: DataTypes.STRING,
-      allowNull: false,
       unique: true,
     },
 

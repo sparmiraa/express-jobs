@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequalize } from "../sequalize/sequalize.js";
+import { sequalize } from "../config/sequalize.js";
 
 export const Candidate = sequalize.define(
   "Candidate",
@@ -12,12 +12,10 @@ export const Candidate = sequalize.define(
 
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
     },
 
     city_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
     },
 
     bio: {
@@ -34,6 +32,11 @@ export const Candidate = sequalize.define(
 
     birthday: {
       type: DataTypes.DATE,
+    },
+
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
 
     is_deleted: {

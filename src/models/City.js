@@ -1,5 +1,5 @@
-import { DataTypes } from "sequelize"
-import { sequalize } from "../sequalize/sequalize.js"
+import { DataTypes } from "sequelize";
+import { sequalize } from "../config/sequalize.js";
 
 export const City = sequalize.define(
   "City",
@@ -7,17 +7,17 @@ export const City = sequalize.define(
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
-      primaryKey: true
+      primaryKey: true,
     },
 
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
-    }
+      unique: true,
+    },
   },
   {
     tableName: "cities",
-    timestamps: false
+    timestamps: false,
   }
-)
+);

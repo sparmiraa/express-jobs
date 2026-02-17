@@ -1,15 +1,15 @@
-import { User } from "../models/User.js";
-import { Role } from "../models/Role.js";
+import { User } from "./User.js";
+import { Role } from "./Role.js";
 
-import { Candidate } from "../models/Candidate.js";
-import { CandidateExperience } from "../models/CandidateExperience.js";
-import { CandidateSkill } from "../models/CandidateSkill.js";
+import { Candidate } from "./Candidate.js";
+import { CandidateExperience } from "./CandidateExperience.js";
+import { CandidateSkill } from "./CandidateSkill.js";
 
-import { Skill } from "../models/Skill.js";
-import { City } from "../models/City.js";
+import { Skill } from "./Skill.js";
+import { City } from "./City.js";
 
-import { Employer } from "../models/Employer.js";
-import { EmployerType } from "../models/EmployerType.js";
+import { Employer } from "./Employer.js";
+import { EmployerType } from "./EmployerType.js";
 
 Role.hasMany(User, { foreignKey: "role_id" });
 User.belongsTo(Role, { foreignKey: "role_id" });

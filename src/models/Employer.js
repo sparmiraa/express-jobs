@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequalize } from "../sequalize/sequalize.js";
+import { sequalize } from "../config/sequalize.js";
 
 export const Employer = sequalize.define(
   "Employer",
@@ -16,12 +16,10 @@ export const Employer = sequalize.define(
 
     city_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
     },
 
     type_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
     },
   },
   {
