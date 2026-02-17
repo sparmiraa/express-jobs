@@ -10,4 +10,8 @@ export const env = {
   DB_PASSWORD: process.env.DB_PASSWORD,
   DB_HOST: process.env.DB_HOST,
   DB_PORT: process.env.DB_PORT,
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+  ADMIN_PHONE_NUMBER: process.env.ADMIN_PHONE_NUMBER,
+  ADMIN_NAME: process.env.ADMIN_NAME,
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
 };
