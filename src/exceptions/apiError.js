@@ -1,4 +1,4 @@
-import HttpStatus from "../constants/httpStatus";
+import HttpStatus from "../constants/httpStatus.js";
 
 export default class ApiError extends Error {
   status;

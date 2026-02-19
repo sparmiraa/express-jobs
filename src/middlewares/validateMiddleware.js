@@ -1,4 +1,4 @@
-import ApiError from "../exceptions/apiError";
+import ApiError from "../exceptions/apiError.js";
 
 export const validateMiddleware = (schema) => {
   return async (req, res, next) => {

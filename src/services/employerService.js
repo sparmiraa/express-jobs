@@ -1,4 +1,4 @@
-import { Employer } from "../models/employer.model.js";
+import { Employer } from "../models/Employer.js";
 
 class EmployerService {
   async createEmpty(userId, transaction) {
