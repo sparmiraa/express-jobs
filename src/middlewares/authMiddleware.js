@@ -13,7 +13,7 @@ export default function AuthMiddleware(req, res, next) {
       throw ApiError.Unauthorized();
     }
 
-    const payload = tokenService.generateAccessToken(token);
+    const payload = tokenService.verifyAccessToken(token);
     if (!payload) {
       throw ApiError.Unauthorized();
     }
