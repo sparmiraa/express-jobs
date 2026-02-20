@@ -9,6 +9,9 @@ export const Employer = sequalize.define(
       autoIncrement: true,
       primaryKey: true,
     },
+    user_id: {
+      type: DataTypes.INTEGER,
+    },
 
     bio: {
       type: DataTypes.TEXT,
