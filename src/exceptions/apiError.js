@@ -17,4 +17,12 @@ export default class ApiError extends Error {
   static Unauthorized(message = "Пользователь не авторизован") {
     return new ApiError(HttpStatus.UNAUTHORIZED, message);
   }
+
+  static Forbidden() {
+    return new ApiError(HttpStatus.FORBIDDEN, "Forbidden");
+  }
+
+    static NotFound(message) {
+    return new ApiError(HttpStatus.NOT_FOUND, message);
+  }
 }

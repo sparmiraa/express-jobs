@@ -16,25 +16,30 @@ export const Candidate = sequalize.define(
 
     city_id: {
       type: DataTypes.INTEGER,
+      defaultValue: null,
     },
 
     bio: {
       type: DataTypes.TEXT,
+      defaultValue: null,
     },
 
     salary_from: {
       type: DataTypes.INTEGER,
+      defaultValue: null,
     },
 
     salary_to: {
       type: DataTypes.INTEGER,
+      defaultValue: null,
     },
 
     birthday: {
       type: DataTypes.DATE,
+      defaultValue: null,
     },
 
-    active: {
+    is_active: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
@@ -48,5 +53,5 @@ export const Candidate = sequalize.define(
     tableName: "candidates",
     createdAt: true,
     updatedAt: false,
-  }
+  },
 );
