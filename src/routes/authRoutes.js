@@ -23,6 +23,6 @@ router.post("/refresh", authController.refresh);
 router.post("/logout", authController.logout);
 router.get("/me", AuthMiddleware, authController.getMe);
 router.post("/forgot-password", authController.forgotPassword);
-router.post("/password-reset", authController.resetPassword);
+router.post("/reset-password", authController.resetPassword);
 
 export default router;

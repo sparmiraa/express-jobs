@@ -19,6 +19,7 @@ export const User = sequalize.define(
     phone_number: {
       type: DataTypes.STRING,
       unique: true,
+      defaultValue: null,
     },
 
     name: {
@@ -46,5 +47,5 @@ export const User = sequalize.define(
     tableName: "users",
     createdAt: true,
     updatedAt: false,
-  }
+  },
 );
