@@ -1,17 +1,12 @@
-
 import ApiError from "../exceptions/apiError.js";
 import { Candidate } from "../models/Candidate.js";
 import { User } from "../models/User.js";
 import { CandidateSkill } from "../models/CandidateSkill.js";
+import { sequalize } from "../config/sequalize.js";
 
 class CandidateService {
   async createEmpty(userId, transaction) {
-    return Candidate.create(
-      {
-        user_id: userId,
-      },
-      { transaction },
-    );
+    return Candidate.create({ user_id: userId }, { transaction });
   }
 
   async getByUserId(userId) {
@@ -27,88 +22,55 @@ class CandidateService {
   }
 
   async updateInfo(userId, data) {
-    const candidate = await this.getByUserId(userId);
+    return sequalize.transaction(async (transaction) => {
+      const candidate = await this.getByUserId(userId);
 
-    const { name, phoneNumber, birthDate, cityId } = data;
+      await User.update(
+        {
+          name: data.name,
+          phone_number: data.phoneNumber,
+        },
+        { where: { id: userId }, transaction }
+      );
 
-    const userUpdateData = {};
+      await candidate.update(
+        {
+          birthday: data.birthDate,
+          city_id: data.cityId,
+        },
+        { transaction }
+      );
 
-    if (name !== undefined) {
-      userUpdateData.name = name;
-    }
-
-    if (phoneNumber !== undefined) {
-      userUpdateData.phone_number = phoneNumber;
-    }
-
-    if (Object.keys(userUpdateData).length > 0) {
-      await User.update(userUpdateData, {
-        where: { id: userId },
-      });
-    }
-
-    const candidateUpdateData = {};
-
-    if (birthDate !== undefined) {
-      candidateUpdateData.birthday = birthDate;
-    }
-
-    if (cityId !== undefined) {
-      candidateUpdateData.city_id = cityId;
-    }
-
-    if (Object.keys(candidateUpdateData).length > 0) {
-      await candidate.update(candidateUpdateData);
-    }
-
-    return candidate;
+      return candidate;
+    });
   }
 
   async updateBio(userId, data) {
     const candidate = await this.getByUserId(userId);
 
-    const { bio, skillsId, salaryFrom, salaryTo } = data;
+    await candidate.update({
+      bio: data.bio,
+      salary_from: data.salaryFrom,
+      salary_to: data.salaryTo,
+    });
 
-    const updateData = {};
-
-    if (bio !== undefined) {
-      updateData.bio = bio;
-    }
-
-    if (salaryFrom !== undefined) {
-      updateData.salary_from = salaryFrom;
-    }
-
-    if (salaryTo !== undefined) {
-      updateData.salary_to = salaryTo;
-    }
-
-    if (Object.keys(updateData).length > 0) {
-      await candidate.update(updateData);
-    }
-
-    if (Array.isArray(skillsId)) {
+    if (data.skillsId) {
       await CandidateSkill.destroy({
         where: { candidate_id: candidate.id },
       });
 
-      if (skillsId.length > 0) {
-        const bulk = skillsId.map((skillsId) => ({
+      await CandidateSkill.bulkCreate(
+        data.skillsId.map((skillId) => ({
           candidate_id: candidate.id,
-          skill_id: skillsId,
-        }));
-
-        await CandidateSkill.bulkCreate(bulk);
-      }
+          skill_id: skillId,
+        }))
+      );
     }
+
     return candidate;
   }
 
   async updateActiveStatus(userId, isActive) {
-    if (typeof isActive !== "boolean") {
-      throw ApiError.BadRequest("Должен быть boolean");
-    }
-
     const candidate = await this.getByUserId(userId);
 
     await candidate.update({

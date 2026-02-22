@@ -16,59 +16,30 @@ class CandidateExperienceService {
     });
   }
 
-  async update(userId, data) {
+  async update(userId, experienceId, data) {
     const candidate = await candidateService.getByUserId(userId);
 
-    const experience = await CandidateExperience.findByPk(data.id);
+    const experience = await CandidateExperience.findByPk(experienceId);
+    if (!experience) throw ApiError.NotFound("Опыт не найден");
+    if (experience.candidate_id !== candidate.id) throw ApiError.Forbidden();
 
-    if (!experience) {
-      throw ApiError.NotFound("Опыт не найден");
-    }
-
-    if (experience.candidate_id !== candidate.id) {
-      throw ApiError.Forbidden();
-    }
-
-    const updateData = {};
-
-    if (data.companyName !== undefined) {
-      updateData.company_name = data.companyName;
-    }
-
-    if (data.title !== undefined) {
-      updateData.job_title = data.title;
-    }
-
-    if (data.bio !== undefined) {
-      updateData.bio = data.bio;
-    }
-
-    if (data.startFrom !== undefined) {
-      updateData.date_start = data.startFrom;
-    }
-
-    if (data.endTo !== undefined) {
-      updateData.date_end = data.endTo;
-    }
-
-    if (Object.keys(updateData).length > 0) {
-      await experience.update(updateData);
-    }
+    await experience.update({
+      company_name: data.companyName,
+      job_title: data.title,
+      bio: data.bio,
+      date_start: data.startFrom,
+      date_end: data.endTo,
+    });
 
     return experience;
   }
 
   async delete(userId, experienceId) {
     const candidate = await candidateService.getByUserId(userId);
+
     const experience = await CandidateExperience.findByPk(experienceId);
-
-    if (!experience) {
-      throw ApiError.NotFound("Опыт не найден");
-    }
-
-    if (experience.candidate_id !== candidate.id) {
-      throw ApiError.Forbidden();
-    }
+    if (!experience) throw ApiError.NotFound("Опыт не найден");
+    if (experience.candidate_id !== candidate.id) throw ApiError.Forbidden();
 
     await experience.destroy();
   }

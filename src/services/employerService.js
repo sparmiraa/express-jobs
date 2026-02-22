@@ -1,15 +1,11 @@
 import ApiError from "../exceptions/apiError.js";
 import { Employer } from "../models/Employer.js";
 import { User } from "../models/User.js";
+import { sequalize } from "../config/sequalize.js";
 
 class EmployerService {
   async createEmpty(userId, transaction) {
-    return Employer.create(
-      {
-        user_id: userId,
-      },
-      { transaction },
-    );
+    return Employer.create({ user_id: userId }, { transaction });
   }
 
   async getByUserId(userId) {
@@ -25,48 +21,34 @@ class EmployerService {
   }
 
   async updateInfo(userId, data) {
-    const employer = this.getByUserId(userId);
+    return sequalize.transaction(async (transaction) => {
+      const employer = await this.getByUserId(userId);
 
-    const { name, cityId, employerTypeId } = data;
+      await User.update(
+        { name: data.name },
+        { where: { id: userId }, transaction }
+      );
 
-    if (name) {
-      await User.update({ name }, { where: { id: userId } });
-    }
+      await employer.update(
+        {
+          city_id: data.cityId,
+          type_id: data.employerTypeId,
+        },
+        { transaction }
+      );
 
-    const employerUpdateData = {};
-
-    if (cityId !== undefined) {
-      employerUpdateData.city_id = cityId;
-    }
-
-    if (employerTypeId !== undefined) {
-      employerUpdateData.type_id = employerTypeId;
-    }
-
-    if (Object.keys(employerUpdateData).length > 0) {
-      employer.update(employerUpdateData);
-    }
-
-    return employer;
+      return employer;
+    });
   }
 
   async updateBio(userId, data) {
-    const employer = this.getByUserId(userId);
+    const employer = await this.getByUserId(userId);
 
-    const { bio, employeesCount } = data;
+    await employer.update({
+      bio: data.bio,
+      employees_count: data.employeesCount,
+    });
 
-    const employerUpdateData = {};
-
-    if (bio !== undefined) {
-      employerUpdateData.bio = bio;
-    }
-    if (employeesCount !== undefined) {
-      employerUpdateData.employees_count = employeesCount;
-    }
-
-    if (Object.keys(employerUpdateData).length > 0) {
-      await employer.update(employerUpdateData);
-    }
     return employer;
   }
 }
