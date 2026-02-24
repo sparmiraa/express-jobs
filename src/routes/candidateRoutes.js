@@ -1,6 +1,6 @@
 import { Router } from "express";
 import AuthMiddleware from "../middlewares/authMiddleware.js";
-import validateMiddleware from "../middlewares/validateMiddleware.js";
+import {validateMiddleware} from "../middlewares/validateMiddleware.js";
 
 import candidateController from "../controllers/candidateController.js";
 
