@@ -13,6 +13,12 @@ export const Employer = sequalize.define(
       type: DataTypes.INTEGER,
     },
 
+    shortBio: {
+      field: 'short_bio',
+      type: DataTypes.TEXT,
+      defaultValue: null,
+    },
+
     bio: {
       type: DataTypes.TEXT,
       defaultValue: null,
