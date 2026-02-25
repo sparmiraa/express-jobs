@@ -3,6 +3,7 @@ import { Employer } from "../models/Employer.js";
 import { EmployerType } from "../models/EmployerType.js";
 import { User } from "../models/User.js";
 import { sequalize } from "../config/sequalize.js";
+import { Op } from "sequelize";
 
 class EmployerService {
   async createEmpty(userId, transaction) {
@@ -27,7 +28,7 @@ class EmployerService {
 
       await User.update(
         { name: data.name },
-        { where: { id: userId }, transaction },
+        { where: { id: userId }, transaction }
       );
 
       await employer.update(
@@ -35,7 +36,7 @@ class EmployerService {
           city_id: data.cityId,
           type_id: data.employerTypeId,
         },
-        { transaction },
+        { transaction }
       );
 
       return employer;
@@ -57,7 +58,10 @@ class EmployerService {
     const queryName = (query.name ?? "").trim();
 
     const page = Number(query.page) > 0 ? Number(query.page) : 1;
-    const limit = Number(query.limit) > 0 ? Number(query.limit) : 12;
+    const limit = Math.min(
+      Number(query.limit) > 0 ? Number(query.limit) : 12,
+      50
+    );
     const offset = (page - 1) * limit;
 
     const userWhere = {};
@@ -67,6 +71,17 @@ class EmployerService {
         [Op.like]: `%${queryName}%`,
       };
     }
+
+    const SORT_FIELDS = {
+      name: [{ model: User, as: "user" }, "name"],
+      type: [{ model: EmployerType, as: "type" }, "name"],
+      id: ["id"],
+    };
+
+    const sort = query.sort ?? "name";
+    const sortOrder = query.order?.toUpperCase() === "DESC" ? "DESC" : "ASC";
+
+    const orderField = SORT_FIELDS[sort] ?? SORT_FIELDS.name;
 
     const { rows, count } = await Employer.findAndCountAll({
       where: {
@@ -90,11 +105,10 @@ class EmployerService {
         },
       ],
 
-      order: [[{ model: User, as: "user" }, "name", "ASC"]],
+      order: [[...orderField, sortOrder]],
 
       limit,
       offset,
-
       distinct: true,
     });
 
