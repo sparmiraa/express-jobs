@@ -159,7 +159,7 @@ class AuthService {
 
     cache.set(`password-reset:${resetId}`, email, 3600);
 
-    const resetLink = `http://localhost:5173/reset-password?requestId=${resetId}`;
+    const resetLink = `http://localhost:5173/auth/reset-password?requestId=${resetId}`;
 
     await sendResetPasswordEmail(email, resetLink);
   }
