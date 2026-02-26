@@ -1,9 +1,18 @@
 import employerService from "../services/employerService.js";
 
 class EmployerController {
+  async getCurrent(req, res, next) {
+    try {
+      const result = await employerService.getCurrentByUserId(req.user.userId);
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   async updateInfo(req, res, next) {
     try {
-      const result = await employerService.updateInfo(req.user.id, req.body);
+      const result = await employerService.updateInfo(req.user.userId, req.body);
       res.json(result);
     } catch (e) {
       next(e);
@@ -12,7 +21,7 @@ class EmployerController {
 
   async updateBio(req, res, next) {
     try {
-      const result = await employerService.updateBio(req.user.id, req.body);
+      const result = await employerService.updateBio(req.user.userId, req.body);
       res.json(result);
     } catch (e) {
       next(e);

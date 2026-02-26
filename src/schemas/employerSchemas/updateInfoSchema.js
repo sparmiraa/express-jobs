@@ -10,5 +10,5 @@ export const updateEmployerInfoSchema = yup.object({
 
   cityId: yup.number().integer().positive().required(),
 
-  employerTypeId: yup.number().integer().positive().required(),
+  typeId: yup.number().integer().positive().required(),
 });
