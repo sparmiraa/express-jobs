@@ -8,14 +8,19 @@ import { updateEmployerInfoSchema } from "../schemas/employerSchemas/updateInfoS
 
 const router = new Router();
 
+router.get(
+  "",
+  AuthMiddleware,
+  employerController.getCurrent
+);
 router.patch(
-  "/employer/info",
+  "/info",
   AuthMiddleware,
   validateMiddleware(updateEmployerInfoSchema),
   employerController.updateInfo
 );
 router.patch(
-  "/employer/bio",
+  "/bio",
   AuthMiddleware,
   validateMiddleware(updateEmployerBioSchema),
   employerController.updateBio

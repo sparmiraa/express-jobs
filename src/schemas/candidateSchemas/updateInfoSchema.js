@@ -9,9 +9,9 @@ export const updateCandidateInfoSchema = yup.object({
     .required(),
 
   phoneNumber: yup.string().matches(/^\+?[0-9]{10,15}$/, "Некорректный номер")
-    .required,
+    .required(),
 
-  birthDate: yup.date().typeError("Некорректная дата").required(),
+  birthday: yup.date().typeError("Некорректная дата").required(),
 
   cityId: yup.number().required(),
 });

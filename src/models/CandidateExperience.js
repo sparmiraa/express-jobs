@@ -11,6 +11,7 @@ export const CandidateExperience = sequalize.define(
     },
 
     candidate_id: {
+      field: "candidate_id",
       type: DataTypes.INTEGER,
       allowNull: false,
     },

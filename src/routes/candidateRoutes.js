@@ -12,6 +12,12 @@ import { updateCandidateBioSchema } from "../schemas/candidateSchemas/updateBioS
 
 const router = new Router();
 
+router.get(
+  "",
+  AuthMiddleware,
+  candidateController.getCurrent
+);
+
 router.patch(
   "/info",
   AuthMiddleware,

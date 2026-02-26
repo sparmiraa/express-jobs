@@ -1,16 +1,28 @@
 import ApiError from "../exceptions/apiError.js";
-import { Employer } from "../models/Employer.js";
-import { User } from "../models/User.js";
-import { sequalize } from "../config/sequalize.js";
+import {Employer} from "../models/Employer.js";
+import {User} from "../models/User.js";
+import {sequalize} from "../config/sequalize.js";
+import userService from "./userService.js";
 
 class EmployerService {
   async createEmpty(userId, transaction) {
-    return Employer.create({ user_id: userId }, { transaction });
+    return Employer.create({user_id: userId}, {transaction});
+  }
+
+  async getCurrentByUserId(userId) {
+    const user = await userService.findById(userId)
+    const employerInstance = await this.getByUserId(userId);
+    const currentEmployer = employerInstance.get({plain: true});
+
+    return {
+      name: user.name, phoneNumber: user.phone_number,
+      email: user.email, ...currentEmployer
+    }
   }
 
   async getByUserId(userId) {
     const employer = await Employer.findOne({
-      where: { user_id: userId, is_deleted: false },
+      where: {user_id: userId, is_deleted: false},
     });
 
     if (!employer) {
@@ -25,16 +37,16 @@ class EmployerService {
       const employer = await this.getByUserId(userId);
 
       await User.update(
-        { name: data.name },
-        { where: { id: userId }, transaction }
+        {name: data.name},
+        {where: {id: userId}, transaction}
       );
 
       await employer.update(
         {
           city_id: data.cityId,
-          type_id: data.employerTypeId,
+          type_id: data.typeId,
         },
-        { transaction }
+        {transaction}
       );
 
       return employer;

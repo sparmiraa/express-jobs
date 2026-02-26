@@ -2,6 +2,15 @@ import candidateExperienceService from "../services/candidateExperienceService.j
 import candidateService from "../services/candidateService.js";
 
 class CandidateController {
+  async getCurrent(req, res, next) {
+    try {
+      const result = await candidateService.getCurrentByUserId(req.user.userId)
+      res.json(result)
+    } catch (e) {
+      next(e);
+    }
+  }
+
   async updateInfo(req, res, next) {
     try {
       const result = await candidateService.updateInfo(
@@ -54,7 +63,7 @@ class CandidateController {
   async deleteExperience(req, res, next) {
     try {
       await candidateExperienceService.delete(req.user.userId, req.params.id);
-      res.json({ success: true });
+      res.json({success: true});
     } catch (e) {
       next(e);
     }
@@ -62,7 +71,7 @@ class CandidateController {
 
   async updateActiveStatus(req, res, next) {
     try {
-      const { isActive } = req.body;
+      const {isActive} = req.body;
       const candidate = await candidateService.updateActiveStatus(
         req.user.userId,
         isActive
