@@ -27,6 +27,15 @@ class EmployerController {
       next(e);
     }
   }
+
+  async search(req, res, next) {
+    try {
+      const result = await employerService.search(req.query);
+      return res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export default new EmployerController();

@@ -6,6 +6,8 @@ import cors from "cors";
 import router from "./src/routes/index.js";
 import errorMiddleware from "./src/middlewares/errorMiddleware.js";
 
+import "./src/models/index.js"
+
 const PORT = env.PORT || 5000;
 
 const app = express();

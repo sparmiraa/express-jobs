@@ -46,6 +46,19 @@ Employer.belongsTo(City, {foreignKey: "city_id"});
 EmployerType.hasMany(Employer, {foreignKey: "type_id"});
 Employer.belongsTo(EmployerType, {foreignKey: "type_id"});
 
+User.hasOne(Employer, { foreignKey: "user_id", as: "employer" });
+Employer.belongsTo(User, { foreignKey: "user_id", as: "user" });
+
+EmployerType.hasMany(Employer, {
+  foreignKey: "type_id",
+  as: "employers",
+});
+
+Employer.belongsTo(EmployerType, {
+  foreignKey: "type_id",
+  as: "type",
+});
+
 Employer.hasMany(Vacancy, {foreignKey: "employer_id", onDelete: "CASCADE"});
 Vacancy.belongsTo(Employer, {foreignKey: "employer_id"});
 
