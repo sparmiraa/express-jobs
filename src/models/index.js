@@ -1,33 +1,33 @@
-import {User} from "./User.js";
-import {Role} from "./Role.js";
+import { User } from "./User.js";
+import { Role } from "./Role.js";
 
-import {Candidate} from "./Candidate.js";
-import {CandidateExperience} from "./CandidateExperience.js";
-import {CandidateSkill} from "./CandidateSkill.js";
+import { Candidate } from "./Candidate.js";
+import { CandidateExperience } from "./CandidateExperience.js";
+import { CandidateSkill } from "./CandidateSkill.js";
 
-import {Skill} from "./Skill.js";
-import {City} from "./City.js";
+import { Skill } from "./Skill.js";
+import { City } from "./City.js";
 
-import {Employer} from "./Employer.js";
-import {EmployerType} from "./EmployerType.js";
+import { Employer } from "./Employer.js";
+import { EmployerType } from "./EmployerType.js";
 
-import {Vacancy} from "./Vacancy.js";
-import {VacancySkill} from "./VacancySkill.js";
+import { Vacancy } from "./Vacancy.js";
+import { VacancySkill } from "./VacancySkill.js";
 
-Role.hasMany(User, {foreignKey: "role_id"});
-User.belongsTo(Role, {foreignKey: "role_id"});
+Role.hasMany(User, { foreignKey: "role_id" });
+User.belongsTo(Role, { foreignKey: "role_id" });
 
-User.hasOne(Candidate, {foreignKey: "user_id"});
-Candidate.belongsTo(User, {foreignKey: "user_id"});
+User.hasOne(Candidate, { foreignKey: "user_id" });
+Candidate.belongsTo(User, { foreignKey: "user_id" });
 
-City.hasMany(Candidate, {foreignKey: "city_id"});
-Candidate.belongsTo(City, {foreignKey: "city_id"});
+City.hasMany(Candidate, { foreignKey: "city_id" });
+Candidate.belongsTo(City, { foreignKey: "city_id" });
 
 Candidate.hasMany(CandidateExperience, {
   foreignKey: "candidate_id",
   onDelete: "CASCADE",
 });
-CandidateExperience.belongsTo(Candidate, {foreignKey: "candidate_id"});
+CandidateExperience.belongsTo(Candidate, { foreignKey: "candidate_id" });
 
 Candidate.belongsToMany(Skill, {
   through: CandidateSkill,
@@ -40,11 +40,11 @@ Skill.belongsToMany(Candidate, {
   otherKey: "candidate_id",
 });
 
-City.hasMany(Employer, {foreignKey: "city_id"});
-Employer.belongsTo(City, {foreignKey: "city_id"});
+City.hasMany(Employer, { foreignKey: "city_id" });
+Employer.belongsTo(City, { foreignKey: "city_id" });
 
-EmployerType.hasMany(Employer, {foreignKey: "type_id"});
-Employer.belongsTo(EmployerType, {foreignKey: "type_id"});
+EmployerType.hasMany(Employer, { foreignKey: "type_id" });
+Employer.belongsTo(EmployerType, { foreignKey: "type_id" });
 
 User.hasOne(Employer, { foreignKey: "user_id", as: "employer" });
 Employer.belongsTo(User, { foreignKey: "user_id", as: "user" });
@@ -59,11 +59,15 @@ Employer.belongsTo(EmployerType, {
   as: "type",
 });
 
-Employer.hasMany(Vacancy, {foreignKey: "employer_id", onDelete: "CASCADE"});
-Vacancy.belongsTo(Employer, {foreignKey: "employer_id"});
+Employer.hasMany(Vacancy, {
+  foreignKey: "employer_id",
+  as: "vacancies",
+  onDelete: "CASCADE",
+});
+Vacancy.belongsTo(Employer, { foreignKey: "employer_id" });
 
-City.hasMany(Vacancy, {foreignKey: "city_id"});
-Vacancy.belongsTo(City, {foreignKey: "city_id"});
+City.hasMany(Vacancy, { foreignKey: "city_id" });
+Vacancy.belongsTo(City, { foreignKey: "city_id" });
 
 Vacancy.belongsToMany(Skill, {
   through: VacancySkill,

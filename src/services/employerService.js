@@ -1,30 +1,33 @@
 import ApiError from "../exceptions/apiError.js";
-import {Employer} from "../models/Employer.js";
+import { Employer } from "../models/Employer.js";
 import { EmployerType } from "../models/EmployerType.js";
-import {User} from "../models/User.js";
-import {sequalize} from "../config/sequalize.js";
+import { User } from "../models/User.js";
+import { Vacancy } from "../models/Vacancy.js";
+import { sequalize } from "../config/sequalize.js";
 import userService from "./userService.js";
-import { Op } from "sequelize";
+import { Op, fn, col } from "sequelize";
 
 class EmployerService {
   async createEmpty(userId, transaction) {
-    return Employer.create({user_id: userId}, {transaction});
+    return Employer.create({ user_id: userId }, { transaction });
   }
 
   async getCurrentByUserId(userId) {
-    const user = await userService.findById(userId)
+    const user = await userService.findById(userId);
     const employerInstance = await this.getByUserId(userId);
-    const currentEmployer = employerInstance.get({plain: true});
+    const currentEmployer = employerInstance.get({ plain: true });
 
     return {
-      name: user.name, phoneNumber: user.phone_number,
-      email: user.email, ...currentEmployer
-    }
+      name: user.name,
+      phoneNumber: user.phone_number,
+      email: user.email,
+      ...currentEmployer,
+    };
   }
 
   async getByUserId(userId) {
     const employer = await Employer.findOne({
-      where: {user_id: userId, is_deleted: false},
+      where: { user_id: userId, is_deleted: false },
     });
 
     if (!employer) {
@@ -39,8 +42,8 @@ class EmployerService {
       const employer = await this.getByUserId(userId);
 
       await User.update(
-        {name: data.name},
-        {where: {id: userId}, transaction}
+        { name: data.name },
+        { where: { id: userId }, transaction },
       );
 
       await employer.update(
@@ -48,7 +51,7 @@ class EmployerService {
           city_id: data.cityId,
           type_id: data.typeId,
         },
-        {transaction}
+        { transaction },
       );
 
       return employer;
@@ -73,7 +76,7 @@ class EmployerService {
     const page = Number(query.page) > 0 ? Number(query.page) : 1;
     const limit = Math.min(
       Number(query.limit) > 0 ? Number(query.limit) : 12,
-      50
+      50,
     );
     const offset = (page - 1) * limit;
 
@@ -88,12 +91,12 @@ class EmployerService {
     const SORT_FIELDS = {
       name: [{ model: User, as: "user" }, "name"],
       type: [{ model: EmployerType, as: "type" }, "name"],
+      vacancies: [fn("COUNT", col("vacancies.id"))],
       id: ["id"],
     };
 
     const sort = query.sort ?? "name";
     const sortOrder = query.order?.toUpperCase() === "DESC" ? "DESC" : "ASC";
-
     const orderField = SORT_FIELDS[sort] ?? SORT_FIELDS.name;
 
     const { rows, count } = await Employer.findAndCountAll({
@@ -101,7 +104,11 @@ class EmployerService {
         is_deleted: false,
       },
 
-      attributes: ["id", "shortBio"],
+      attributes: [
+        "id",
+        "shortBio",
+        [fn("COUNT", col("vacancies.id")), "vacanciesCount"],
+      ],
 
       include: [
         {
@@ -116,17 +123,30 @@ class EmployerService {
           as: "type",
           attributes: ["id", "name"],
         },
+        {
+          model: Vacancy,
+          as: "vacancies",
+          attributes: [],
+          where: {
+            is_deleted: false,
+            is_active: true,
+          },
+          required: false,
+        },
       ],
+
+      group: ["Employer.id", "user.id", "type.id"],
 
       order: [[...orderField, sortOrder]],
 
       limit,
       offset,
       distinct: true,
+      subQuery: false,
     });
 
     return {
-      total: count,
+      total: Array.isArray(count) ? count.length : count,
       page,
       limit,
       data: rows.map((row) => ({
@@ -134,6 +154,7 @@ class EmployerService {
         name: row.user.name,
         shortBio: row.shortBio,
         type: row.type,
+        vacanciesCount: Number(row.get("vacanciesCount")),
       })),
     };
   }

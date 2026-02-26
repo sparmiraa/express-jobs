@@ -8,11 +8,7 @@ import { updateEmployerInfoSchema } from "../schemas/employerSchemas/updateInfoS
 
 const router = new Router();
 
-router.get(
-  "",
-  AuthMiddleware,
-  employerController.getCurrent
-);
+router.get("", AuthMiddleware, employerController.getCurrent);
 router.patch(
   "/info",
   AuthMiddleware,
@@ -26,6 +22,6 @@ router.patch(
   employerController.updateBio,
 );
 
-router.get("/search", employerController.search);
+router.get("/search", AuthMiddleware, employerController.search);
 
 export default router;
