@@ -1,6 +1,16 @@
 import vacancyService from "../services/vacancyService.js";
 
 class VacancyController {
+
+  async getAllByEmployerId(req, res, next) {
+    try {
+      const result = await vacancyService.getAllByEmployerId(req.params.id);
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   async getById(req, res, next) {
     try {
       const result = await vacancyService.getById(req.params.id);

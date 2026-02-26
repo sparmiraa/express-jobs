@@ -13,6 +13,13 @@ const router = new Router();
 
 // TODO: add view/:id fpr candidate
 router.get(
+  "/employer/:id",
+  AuthMiddleware,
+  RoleMiddleware(RolesName.EMPLOYER),
+  vacancyController.getAllByEmployerId
+);
+
+router.get(
   "/:id/edit",
   AuthMiddleware,
   RoleMiddleware(RolesName.EMPLOYER),

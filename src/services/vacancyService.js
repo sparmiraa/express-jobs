@@ -5,7 +5,62 @@ import {VacancySkill} from "../models/VacancySkill.js";
 import {sequalize} from "../config/sequalize.js";
 import ApiError from "../exceptions/apiError.js";
 
+import {City} from "../models/City.js";
+
 class VacancyService {
+
+  async getAllByEmployerId(employerId, query = {}) {
+    const page = Number(query.page) > 0 ? Number(query.page) : 1;
+    const limit = Math.min(Number(query.limit) > 0 ? Number(query.limit) : 12, 50);
+    const offset = (page - 1) * limit;
+
+    const {rows, count} = await Vacancy.findAndCountAll({
+      where: {employer_id: employerId},
+      attributes: [
+        "id",
+        "title",
+        "city_id",
+        "salary_from",
+        "salary_to",
+        "is_active",
+        "createdAt",
+      ],
+      include: [
+        {
+          model: City,
+          attributes: ["id", "name"],
+          required: false,
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+      limit,
+      offset,
+    });
+
+    const items = rows.map((v) => {
+      const plain = v.get({plain: true});
+      return {
+        id: plain.id,
+        title: plain.title,
+        cityId: plain.city_id,
+        cityName: plain.City?.name ?? null,
+        salaryFrom: plain.salary_from,
+        salaryTo: plain.salary_to,
+        isActive: plain.is_active,
+        createdAt: plain.createdAt,
+      };
+    });
+
+    return {
+      items,
+      pagination: {
+        page,
+        limit,
+        total: count,
+        totalPages: Math.ceil(count / limit),
+      },
+    };
+  }
 
   async getById(vacancyId) {
     const vacancy = await Vacancy.findOne({
