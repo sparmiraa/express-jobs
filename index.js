@@ -8,7 +8,7 @@ import errorMiddleware from "./src/middlewares/errorMiddleware.js";
 
 import "./src/models/index.js"
 
-const PORT = env.PORT || 5000;
+const PORT = env.PORT || 5001;
 
 const app = express();
 

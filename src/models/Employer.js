@@ -31,7 +31,7 @@ export const Employer = sequalize.define(
 
     type_id: {
       type: DataTypes.INTEGER,
-      defaultValue: null,
+      defaultValue: null, 
     },
 
     employees_count: { type: DataTypes.INTEGER, defaultValue: null },

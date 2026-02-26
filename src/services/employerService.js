@@ -60,6 +60,7 @@ class EmployerService {
 
     await employer.update({
       bio: data.bio,
+      shortBio: data.shortBio,
       employees_count: data.employeesCount,
     });
 
