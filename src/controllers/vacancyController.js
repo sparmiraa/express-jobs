@@ -1,6 +1,15 @@
 import vacancyService from "../services/vacancyService.js";
 
 class VacancyController {
+  async getById(req, res, next) {
+    try {
+      const result = await vacancyService.getById(req.params.id);
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   async create(req, res, next) {
     try {
       const result = await vacancyService.create(req.user.userId, req.body);

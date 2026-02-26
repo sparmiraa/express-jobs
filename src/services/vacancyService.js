@@ -7,8 +7,27 @@ import ApiError from "../exceptions/apiError.js";
 
 class VacancyService {
 
-  async filter(){
+  async getById(vacancyId) {
+    const vacancy = await Vacancy.findOne({
+      where: {id: vacancyId},
+      include: [
+        {
+          model: Skill,
+          attributes: ["id"],
+          through: {attributes: []},
+        },
+      ],
+    });
 
+    if (!vacancy) throw ApiError.NotFound("Вакансия не найдена");
+
+    const plain = vacancy.get({plain: true});
+
+    return {
+      ...plain,
+      skills: plain.Skills?.map((s) => s.id) ?? [],
+      Skills: undefined
+    };
   }
 
   async create(userId, createDto) {
@@ -18,7 +37,7 @@ class VacancyService {
         where: {user_id: userId, is_deleted: false},
         transaction: t,
       });
-      if (!employer) throw ApiError.BadRequest("Работодатель не найден");
+      if (!employer) throw ApiError.NotFound("Работодатель не найден");
 
       await this._assertSkillsExist(createDto.skillIds, t);
 
@@ -55,7 +74,7 @@ class VacancyService {
         where: {user_id: userId, is_deleted: false},
         transaction: t,
       });
-      if (!employer) throw ApiError.BadRequest("Работодатель не найден");
+      if (!employer) throw ApiError.NotFound("Работодатель не найден");
 
       const vacancy = await Vacancy.findOne({
         where: {
@@ -65,7 +84,7 @@ class VacancyService {
         },
         transaction: t,
       });
-      if (!vacancy) throw ApiError.BadRequest("Вакансия не найдена");
+      if (!vacancy) throw ApiError.NotFound("Вакансия не найдена");
 
       await this._assertSkillsExist(updateDto.skillIds, t);
 

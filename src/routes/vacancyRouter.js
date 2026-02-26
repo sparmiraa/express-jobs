@@ -11,6 +11,14 @@ import {
 
 const router = new Router();
 
+// TODO: add view/:id fpr candidate
+router.get(
+  "/:id/edit",
+  AuthMiddleware,
+  RoleMiddleware(RolesName.EMPLOYER),
+  vacancyController.getById
+);
+
 router.post(
   "",
   AuthMiddleware,
