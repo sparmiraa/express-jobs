@@ -25,6 +25,13 @@ router.get(
   vacancyController.getPublicById,
 );
 
+router.get(
+  "/company/:id",
+  AuthMiddleware,
+  RoleMiddleware(RolesName.CANDIDATE),
+  vacancyController.getAllPublicByEmployerId,
+);
+
 // TODO: add view/:id fpr candidate
 router.get(
   "/employer/:id",

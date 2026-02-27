@@ -12,7 +12,10 @@ class EmployerController {
 
   async updateInfo(req, res, next) {
     try {
-      const result = await employerService.updateInfo(req.user.userId, req.body);
+      const result = await employerService.updateInfo(
+        req.user.userId,
+        req.body,
+      );
       res.json(result);
     } catch (e) {
       next(e);
@@ -32,6 +35,15 @@ class EmployerController {
     try {
       const result = await employerService.search(req.query);
       return res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async getPublicById(req, res, next) {
+    try {
+      const result = await employerService.getPublicById(req.params.id);
+      res.json(result);
     } catch (e) {
       next(e);
     }

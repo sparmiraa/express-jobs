@@ -6,6 +6,7 @@ import { Vacancy } from "../models/Vacancy.js";
 import { sequalize } from "../config/sequalize.js";
 import userService from "./userService.js";
 import { Op, fn, col } from "sequelize";
+import { City } from "../models/City.js";
 
 class EmployerService {
   async createEmpty(userId, transaction) {
@@ -158,6 +159,49 @@ class EmployerService {
       })),
     };
   }
+
+  async getPublicById(employerId) {
+  const id = Number(employerId);
+  if (!Number.isFinite(id) || id <= 0) throw ApiError.BadRequest("Некорректный id компании");
+
+  const employer = await Employer.findOne({
+    where: { id, is_deleted: false },
+    attributes: ["id", "shortBio", "bio", "city_id", "type_id", "employees_count"],
+    include: [
+      { model: User, as: "user", attributes: ["id", "name"], required: true },
+      { model: EmployerType, as: "type", attributes: ["id", "name"], required: false },
+      { model: City, attributes: ["id", "name"], required: false },
+      {
+        model: Vacancy,
+        as: "vacancies",
+        attributes: [],
+        where: { is_deleted: false, is_active: true },
+        required: false,
+      },
+    ],
+    group: ["Employer.id", "user.id", "type.id", "City.id"],
+  });
+
+  if (!employer) throw ApiError.NotFound("Компания не найдена");
+
+  // ⚠️ т.к. group + vacancies attributes: [] — count не прилетит сам,
+  // проще посчитать отдельно:
+  const vacanciesCount = await Vacancy.count({
+    where: { employer_id: id, is_deleted: false, is_active: true },
+  });
+
+  return {
+    id: employer.id,
+    name: employer.user.name,
+    shortBio: employer.shortBio ?? null,
+    bio: employer.bio ?? null,
+    cityId: employer.city_id ?? null,
+    cityName: employer.City?.name ?? null,
+    employeesCount: employer.employees_count ?? null,
+    type: employer.type ?? null,
+    vacanciesCount,
+  };
+}
 }
 
 export default new EmployerService();

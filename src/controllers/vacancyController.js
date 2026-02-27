@@ -71,6 +71,15 @@ class VacancyController {
       next(e);
     }
   }
+
+  async getAllPublicByEmployerId(req, res, next) {
+  try {
+    const result = await vacancyService.getAllPublicByEmployerId(req.params.id, req.query);
+    res.json(result);
+  } catch (e) {
+    next(e);
+  }
+}
 }
 
 export default new VacancyController();

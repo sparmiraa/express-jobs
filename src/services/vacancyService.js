@@ -207,6 +207,74 @@ class VacancyService {
   // CANDIDATE (новое)
   // =========================
 
+  async getAllPublicByEmployerId(employerId, query = {}) {
+    const id = Number(employerId);
+    if (!Number.isFinite(id) || id <= 0)
+      throw ApiError.BadRequest("Некорректный id компании");
+
+    const page = Number(query.page) > 0 ? Number(query.page) : 1;
+    const limit = Math.min(
+      Number(query.limit) > 0 ? Number(query.limit) : 10,
+      50,
+    );
+    const offset = (page - 1) * limit;
+
+    const { rows, count } = await Vacancy.findAndCountAll({
+      where: {
+        employer_id: id,
+        is_active: true,
+        is_deleted: false,
+      },
+      attributes: [
+        "id",
+        "title",
+        "city_id",
+        "salary_from",
+        "salary_to",
+        "createdAt",
+      ],
+      include: [
+        { model: City, attributes: ["id", "name"], required: false },
+        {
+          model: Skill,
+          attributes: ["id", "name"],
+          through: { attributes: [] },
+          required: false,
+        },
+      ],
+      distinct: true,
+      order: [["createdAt", "DESC"]],
+      limit,
+      offset,
+    });
+
+    const items = rows.map((v) => {
+      const plain = v.get({ plain: true });
+      return {
+        id: plain.id,
+        title: plain.title,
+        employerId: id,
+        employerName: null, // если нужно — можно подтянуть отдельно
+        cityId: plain.city_id,
+        cityName: plain.City?.name ?? null,
+        salaryFrom: plain.salary_from,
+        salaryTo: plain.salary_to,
+        createdAt: plain.createdAt,
+        skills: (plain.Skills ?? []).map((s) => ({ id: s.id, name: s.name })),
+      };
+    });
+
+    return {
+      items,
+      pagination: {
+        page,
+        limit,
+        total: count,
+        totalPages: Math.ceil(count / limit),
+      },
+    };
+  }
+
   async getAllForCandidate(query = {}) {
     const page = Number(query.page) > 0 ? Number(query.page) : 1;
     const limit = Math.min(
