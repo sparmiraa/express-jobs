@@ -107,7 +107,6 @@ class VacancyService {
           plus_text: createDto.plusText,
           responsibilities: createDto.responsibilities,
           assumptions: createDto.assumptions,
-          is_active: false,
         },
         {transaction: t}
       );
