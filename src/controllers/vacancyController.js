@@ -1,7 +1,6 @@
 import vacancyService from "../services/vacancyService.js";
 
 class VacancyController {
-
   async getAllByEmployerId(req, res, next) {
     try {
       const result = await vacancyService.getAllByEmployerId(req.params.id);
@@ -34,7 +33,7 @@ class VacancyController {
       const result = await vacancyService.update(
         req.user.userId,
         req.params.id,
-        req.body
+        req.body,
       );
       res.json(result);
     } catch (e) {
@@ -47,8 +46,26 @@ class VacancyController {
       const result = await vacancyService.changeStatus(
         req.user.userId,
         req.params.id,
-        req.body.isActive
+        req.body.isActive,
       );
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async getAllForCandidate(req, res, next) {
+    try {
+      const result = await vacancyService.getAllForCandidate(req.query);
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async getPublicById(req, res, next) {
+    try {
+      const result = await vacancyService.getPublicById(req.params.id);
       res.json(result);
     } catch (e) {
       next(e);
